@@ -1,6 +1,8 @@
 $(document).ready(() => {
+    // Array of topics used to pull gifs with seed data
     var topics = ['sneakers', 'automation', 'photography', 'canon', 'friday', 'dancing'];
 
+    // Create all necesary elements dynamically
     var view = $('#container');
     var containerRow = $('<div class="row">');
     var gifContainer = $('<div>');
@@ -11,38 +13,53 @@ $(document).ready(() => {
     gifRow.addClass('row');
     gifContainer.append(gifRow);
     containerRow.append(gifContainer);
+    var formContainer = $('<div>');
+    formContainer.addClass('col-4');
     var formSection = $('<div>');
-    formSection.addClass('col-4');
+    formSection.addClass('input-group');
     var input = $('<input id="topicInput" type="text">');
     input.addClass('form-control');
-    var submit = $('<button class="btn btn-primary">')
+    var buttonContainer = $('<div>');
+    buttonContainer.addClass('input-group-append');
+    var submit = $('<button class="btn btn-outline-primary">')
     submit.text('Add Topic');
     submit.click(function(){
         var topic = $('#topicInput').val().trim();
-        topics.push(topic);
+        if(topic != ''){
+            topics.push(topic);
+        }
         $('#topicInput').val('');
         redrawTopics();
     }.bind(this));
+
+    // Add Elements to Dom
+    formContainer.append(formSection);
     formSection.append(input);
-    formSection.append(submit);
-    containerRow.append(formSection);
+    buttonContainer.append(submit);
+    formSection.append(buttonContainer);
+    containerRow.append(formContainer);
     var btnGroup = $('<div>');
     btnGroup.addClass('btn-group row');
     redrawTopics();
     view.append(btnGroup);
+    view.append($('<br>'));
+    view.append($('<br>'));
     view.append(containerRow);
 
+    // This will make sure the topics buttons stay 
+    // up to date with the array
     function redrawTopics(){
         btnGroup.empty();
         topics.forEach((topic) => {
             var button = $('<button>');
-            button.addClass('btn btn-primary');
+            button.addClass('btn btn-outline-dark');
             button.text(topic);
             button.click(getGifs);
             btnGroup.append(button);
         });
     }
 
+    // All logic to get gifs from the api.
     function getGifs(){
         $('#gifRow').empty();
         $.ajax({
@@ -66,6 +83,8 @@ $(document).ready(() => {
         });
     };
 
+    // Handler for when someone clicks a gif that 
+    // changes play state
     function switchImage(){
         var element = $(this);
         var currentImage = element.attr('src');
